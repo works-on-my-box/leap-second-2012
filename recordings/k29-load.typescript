@@ -1,0 +1,193 @@
+Script started on 2026-11-25 06:45:05+00:00 [COMMAND="bash run-vm.sh vmlinuz-3.2.0-29-generic initrd.gz demo=auto"]
+c[?7l[2J[0mSeaBIOS (version 1.16.3-debian-1.16.3-2)
+Booting from ROM..c[?7l[2J
+root@probe:~# cat /PACKAGES.txt
+bash_4.2-2ubuntu2_amd64.deb
+busybox-static_1.18.5-1ubuntu4_amd64.deb
+coreutils_8.13-3ubuntu3_amd64.deb
+libacl1_2.2.51-5ubuntu1_amd64.deb
+libattr1_2.4.46-5ubuntu1_amd64.deb
+libc6_2.15-0ubuntu10_amd64.deb
+libncurses5_5.9-4_amd64.deb
+libselinux1_2.1.0-4.1ubuntu1_amd64.deb
+libsensors4_3.3.1-2ubuntu1_amd64.deb
+libtinfo5_5.9-4_amd64.deb
+procps_3.2.8-11ubuntu6_amd64.deb
+sysstat_10.0.3-1_amd64.deb
+
+root@probe:~# uname -a
+Linux probe 3.2.0-29-generic #46-Ubuntu SMP Fri Jul 27 17:03:23 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux
+
+root@probe:~# cat /proc/version
+Linux version 3.2.0-29-generic (buildd@allspice) (gcc version 4.6.3 (Ubuntu/Linaro 4.6.3-1ubuntu5) ) #46-Ubuntu SMP Fri Jul 27 17:03:23 UTC 2012
+
+root@probe:~# cat /sys/devices/system/clocksource/clocksource0/current_clocksource; grep -m1 hres_active /proc/timer_list
+hpet
+  .hres_active    : 1
+
+root@probe:~# date --version | head -n 1
+date (GNU coreutils) 8.13
+
+root@probe:~# date -u -s "2012-06-30 23:59:35"
+Sat Jun 30 23:59:35 UTC 2012
+
+root@probe:~# leapins
+before: adjtimex()=5 TIME_ERROR (clock unsynchronized), status=0x0040 STA_UNSYNC
+after : adjtimex()=0 TIME_OK, status=0x0010 STA_INS
+
+root@probe:~# timedwait-load 2 > /tmp/load.log &
+[load] 23:59:36 UTC  threads=2  wakeups/s=17        cpu=  1.2%
+[load] 23:59:37 UTC  threads=2  wakeups/s=19        cpu=  2.1%
+[load] 23:59:38 UTC  threads=2  wakeups/s=19        cpu=  1.2%
+[load] 23:59:39 UTC  threads=2  wakeups/s=19        cpu=  0.7%
+[load] 23:59:40 UTC  threads=2  wakeups/s=19        cpu=  1.0%
+[load] 23:59:41 UTC  threads=2  wakeups/s=19        cpu=  1.2%
+[load] 23:59:42 UTC  threads=2  wakeups/s=19        cpu=  1.4%
+
+---------- ДО полуночи ----------
+
+root@probe:~# top -b -n 2 -d 1 | awk '/^top -/{n++} n==2' | head -n 11
+top - 23:59:44 up 0 min,  0 users,  load average: 0.00, 0.00, 0.00
+Tasks:  45 total,   1 running,  44 sleeping,   0 stopped,   0 zombie
+Cpu(s):  2.4%us,  1.4%sy,  0.0%ni, 96.2%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Mem:    761256k total,    47440k used,   713816k free,        0k buffers
+Swap:        0k total,        0k used,        0k free,    23488k cached
+
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND            
+  103 0         20   0 17204 1064  860 R    7  0.1   0:00.19 top                
+   85 0         20   0 17628  256  208 S    1  0.0   0:00.12 timedwait-load     
+  104 0         20   0  2092  260  212 S    1  0.0   0:00.01 awk                
+    1 0         20   0 17864 1420 1164 S    0  0.2   0:01.57 init               
+
+root@probe:~# mpstat -P ALL 1 1 | head -n 6
+Linux 3.2.0-29-generic (probe) 	06/30/12 	_x86_64_	(2 CPU)
+
+23:59:44     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest   %idle
+23:59:45     all    0.00    0.00    0.98    0.00    0.00    0.00    0.00    0.00   99.02
+23:59:45       0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+23:59:45       1    0.98    0.00    0.98    0.00    0.00    0.00    0.00    0.00   98.04
+
+root@probe:~# cat /proc/loadavg
+0.00 0.00 0.00 1/44 109
+
+root@probe:~# leapins show; date -u
+state: adjtimex()=1 TIME_INS (insert leap second at midnight UTC), status=0x0010 STA_INS
+Sat Jun 30 23:59:45 UTC 2012
+
+root@probe:~# leapins offset; grep -A5 'clock 1:' /proc/timer_list | grep offset
+CLOCK_REALTIME - CLOCK_MONOTONIC = 1341100772128876436 nsecs
+  .offset:     1341100772128908366 nsecs
+  .offset:     1341100772128908366 nsecs
+[load] 23:59:47 UTC  threads=2  wakeups/s=19        cpu=  0.7%
+[load] 23:59:48 UTC  threads=2  wakeups/s=19        cpu=  0.7%
+[load] 23:59:49 UTC  threads=2  wakeups/s=19        cpu=  0.7%
+[load] 23:59:50 UTC  threads=2  wakeups/s=19        cpu=  0.8%
+[load] 23:59:51 UTC  threads=2  wakeups/s=19        cpu=  0.7%
+[load] 23:59:52 UTC  threads=2  wakeups/s=19        cpu=  0.9%
+[load] 23:59:53 UTC  threads=2  wakeups/s=19        cpu=  0.6%
+[load] 23:59:54 UTC  threads=2  wakeups/s=19        cpu=  0.8%
+[load] 23:59:55 UTC  threads=2  wakeups/s=19        cpu=  1.2%
+[load] 23:59:56 UTC  threads=2  wakeups/s=19        cpu=  0.5%
+[load] 23:59:57 UTC  threads=2  wakeups/s=17        cpu=  0.8%
+[load] 23:59:58 UTC  threads=2  wakeups/s=19        cpu=  0.5%
+[load] 23:59:59 UTC  threads=2  wakeups/s=15        cpu=  0.6%
+[load] 00:00:00 UTC  threads=2  wakeups/s=3         cpu=  0.2%
+[load] 00:00:01 UTC  threads=2  wakeups/s=19        cpu=  0.7%
+[load] 00:00:02 UTC  threads=2  wakeups/s=19        cpu=  0.6%
+[load] 00:00:03 UTC  threads=2  wakeups/s=19        cpu=  0.9%
+[load] 00:00:04 UTC  threads=2  wakeups/s=19        cpu=  1.4%
+[load] 00:00:05 UTC  threads=2  wakeups/s=19        cpu=  0.9%
+[load] 00:00:06 UTC  threads=2  wakeups/s=19        cpu=  0.7%
+[load] 00:00:07 UTC  threads=2  wakeups/s=17        cpu=  0.8%
+[load] 00:00:08 UTC  threads=2  wakeups/s=19        cpu=  0.6%
+
+root@probe:~# dmesg | grep -i -E "leap|clock:"
+[   27.890059] Clock: inserting leap second 23:59:60 UTC
+
+root@probe:~# leapins show; date -u
+state: adjtimex()=4 TIME_WAIT (leap second has occurred), status=0x0010 STA_INS
+Sun Jul  1 00:00:09 UTC 2012
+
+root@probe:~# leapins offset; grep -A5 'clock 1:' /proc/timer_list | grep offset
+CLOCK_REALTIME - CLOCK_MONOTONIC = 1341100771128304706 nsecs
+  .offset:     1341100771128908366 nsecs
+  .offset:     1341100771128908366 nsecs
+
+---------- ПОСЛЕ вставленной секунды ----------
+
+root@probe:~# top -b -n 2 -d 1 | awk '/^top -/{n++} n==2' | head -n 11
+top - 00:00:11 up 0 min,  0 users,  load average: 0.06, 0.01, 0.01
+Tasks:  45 total,   1 running,  44 sleeping,   0 stopped,   0 zombie
+Cpu(s):  0.0%us,  0.5%sy,  0.0%ni, 99.5%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Mem:    761256k total,    47800k used,   713456k free,        0k buffers
+Swap:        0k total,        0k used,        0k free,    23488k cached
+
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND            
+  172 0         20   0 17204 1060  860 R    4  0.1   0:00.12 top                
+   85 0         20   0 17628  256  208 S    1  0.0   0:00.34 timedwait-load     
+    1 0         20   0 17864 1420 1164 S    0  0.2   0:01.57 init               
+    2 0         20   0     0    0    0 S    0  0.0   0:00.01 kthreadd           
+
+root@probe:~# mpstat -P ALL 1 1 | head -n 6
+Linux 3.2.0-29-generic (probe) 	07/01/12 	_x86_64_	(2 CPU)
+
+00:00:11     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest   %idle
+00:00:12     all    0.50    0.00    0.50    0.00    0.00    0.00    0.00    0.00   99.01
+00:00:12       0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+00:00:12       1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+
+root@probe:~# cat /proc/loadavg
+0.13 0.03 0.01 1/44 178
+[load] 00:00:13 UTC  threads=2  wakeups/s=19        cpu=  0.7%
+[load] 00:00:14 UTC  threads=2  wakeups/s=19        cpu=  0.6%
+[load] 00:00:15 UTC  threads=2  wakeups/s=19        cpu=  0.6%
+[load] 00:00:16 UTC  threads=2  wakeups/s=17        cpu=  1.0%
+[load] 00:00:17 UTC  threads=2  wakeups/s=19        cpu=  0.7%
+
+root@probe:~# date -s "$(date)"
+Sun Jul  1 00:00:17 UTC 2012
+[load] 00:00:17 UTC  threads=2  wakeups/s=13        cpu=  0.5%
+[load] 00:00:18 UTC  threads=2  wakeups/s=9         cpu=  0.5%
+[load] 00:00:19 UTC  threads=2  wakeups/s=19        cpu=  0.8%
+[load] 00:00:20 UTC  threads=2  wakeups/s=17        cpu=  0.7%
+[load] 00:00:22 UTC  threads=2  wakeups/s=19        cpu=  0.5%
+[load] 00:00:23 UTC  threads=2  wakeups/s=19        cpu=  0.6%
+
+---------- ПОСЛЕ date -s ----------
+
+root@probe:~# top -b -n 2 -d 1 | awk '/^top -/{n++} n==2' | head -n 11
+top - 00:00:25 up 0 min,  0 users,  load average: 0.11, 0.03, 0.01
+Tasks:  45 total,   1 running,  44 sleeping,   0 stopped,   0 zombie
+Cpu(s):  0.5%us,  1.0%sy,  0.0%ni, 98.5%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Mem:    761256k total,    47808k used,   713448k free,        0k buffers
+Swap:        0k total,        0k used,        0k free,    23488k cached
+
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND            
+  205 0         20   0 17204 1060  860 R    5  0.1   0:00.15 top                
+    3 0         20   0     0    0    0 S    1  0.0   0:00.02 ksoftirqd/0        
+   85 0         20   0 17628  256  208 S    1  0.0   0:00.44 timedwait-load     
+    1 0         20   0 17864 1420 1164 S    0  0.2   0:01.57 init               
+
+root@probe:~# mpstat -P ALL 1 1 | head -n 6
+Linux 3.2.0-29-generic (probe) 	07/01/12 	_x86_64_	(2 CPU)
+
+00:00:25     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest   %idle
+00:00:26     all    0.00    0.00    0.50    0.00    0.00    0.00    0.00    0.00   99.50
+00:00:26       0    0.00    0.00    0.99    0.00    0.00    0.00    0.00    0.00   99.01
+00:00:26       1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+
+root@probe:~# cat /proc/loadavg
+0.10 0.03 0.01 1/44 211
+
+root@probe:~# leapins show; date -u
+state: adjtimex()=5 TIME_ERROR (clock unsynchronized), status=0x0050 STA_INS STA_UNSYNC
+Sun Jul  1 00:00:26 UTC 2012
+
+root@probe:~# leapins offset; grep -A5 'clock 1:' /proc/timer_list | grep offset
+CLOCK_REALTIME - CLOCK_MONOTONIC = 1341100770258113471 nsecs
+  .offset:     1341100770258144066 nsecs
+  .offset:     1341100770258144066 nsecs
+== demo done
+[   56.758109] SysRq : Resetting
+
+Script done on 2026-11-25 06:46:03+00:00 [COMMAND_EXIT_CODE="0"]

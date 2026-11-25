@@ -1,0 +1,217 @@
+Script started on 2026-11-25 07:00:22+00:00 [COMMAND="bash run-vm.sh vmlinuz-3.2.0-29-generic initrd.gz demo=mysql"]
+c[?7l[2J[0mSeaBIOS (version 1.16.3-debian-1.16.3-2)
+Booting from ROM...
+c[?7l[2J
+root@probe:~# uname -a
+Linux probe 3.2.0-29-generic #46-Ubuntu SMP Fri Jul 27 17:03:23 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux
+
+root@probe:~# mysqld --version
+mysqld  Ver 5.5.22-0ubuntu1 for debian-linux-gnu on x86_64 ((Ubuntu))
+
+root@probe:~# mysql_install_db --no-defaults --force --user=root --basedir=/usr --datadir=/tmp/mysql > /tmp/install.log 2>&1; echo "exit=$?"; grep -i -E "ok|error" /tmp/install.log | head -n 5; ls /tmp/mysql
+exit=0
+OK
+OK
+mysql  performance_schema  test
+
+root@probe:~# date -u -s "2012-06-30 23:58:50"
+Sat Jun 30 23:58:50 UTC 2012
+
+root@probe:~# leapins
+before: adjtimex()=5 TIME_ERROR (clock unsynchronized), status=0x0040 STA_UNSYNC
+after : adjtimex()=0 TIME_OK, status=0x0010 STA_INS
+
+root@probe:~# mysqld --no-defaults --user=root --datadir=/tmp/mysql --socket=/tmp/mysql.sock --pid-file=/tmp/mysql.pid --skip-networking --log-error=/tmp/mysql.err &
+
+root@probe:~# i=0; until [ -S /tmp/mysql.sock ] || [ $i -ge 120 ]; do sleep 1; i=$((i+1)); done; tail -n 2 /tmp/mysql.err; ps -o pid,nlwp,stat,args -p 130
+120630 23:58:51 [Note] mysqld: ready for connections.
+Version: '5.5.22-0ubuntu1'  socket: '/tmp/mysql.sock'  port: 0  (Ubuntu)
+  PID NLWP STAT COMMAND
+  130   16 Sl   mysqld --no-defaults --user=root --datadir=/tmp/mysql --socket=/
+[mysqld] 23:58:53 UTC  pid=130  cpu=1%
+[mysqld] 23:58:54 UTC  pid=130  cpu=0%
+[mysqld] 23:58:55 UTC  pid=130  cpu=0%
+[mysqld] 23:58:56 UTC  pid=130  cpu=0%
+[mysqld] 23:58:58 UTC  pid=130  cpu=0%
+
+---------- ДО полуночи ----------
+
+root@probe:~# top -b -n 2 -d 1 -p 130 | awk '/^top -/{n++} n==2' | tail -n 2
+  130 root      20   0  697m  40m 5980 S    0  4.0   0:00.84 mysqld             
+
+
+root@probe:~# top -b -H -n 2 -d 1 -p 130 | awk '/^top -/{n++} n==2' | sed -n '7,16p'
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND            
+  144 root      20   0  697m  40m 5980 S    1  4.0   0:00.01 mysqld             
+  145 root      20   0  697m  40m 5980 S    1  4.0   0:00.01 mysqld             
+  130 root      20   0  697m  40m 5980 S    0  4.0   0:00.69 mysqld             
+  134 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  135 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  136 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  137 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  138 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  139 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+
+root@probe:~# mpstat -P ALL 1 1 | head -n 6
+Linux 3.2.0-29-generic (probe) 	06/30/12 	_x86_64_	(2 CPU)
+
+23:59:01     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest   %idle
+23:59:02     all    0.00    0.00    0.50    0.00    0.00    0.00    0.00    0.00   99.50
+23:59:02       0    0.00    0.00    1.00    0.00    0.00    0.00    0.00    0.00   99.00
+23:59:02       1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+
+root@probe:~# leapins show; date -u
+state: adjtimex()=1 TIME_INS (insert leap second at midnight UTC), status=0x0010 STA_INS
+Sat Jun 30 23:59:02 UTC 2012
+
+root@probe:~# leapins offset; grep -A5 'clock 1:' /proc/timer_list | grep offset
+CLOCK_REALTIME - CLOCK_MONOTONIC = 1341100724122503656 nsecs
+  .offset:     1341100724122526536 nsecs
+  .offset:     1341100724122526536 nsecs
+[mysqld] 23:59:04 UTC  pid=130  cpu=0%
+[mysqld] 23:59:05 UTC  pid=130  cpu=0%
+[mysqld] 23:59:06 UTC  pid=130  cpu=1%
+[mysqld] 23:59:07 UTC  pid=130  cpu=0%
+[mysqld] 23:59:08 UTC  pid=130  cpu=1%
+[mysqld] 23:59:09 UTC  pid=130  cpu=0%
+[mysqld] 23:59:10 UTC  pid=130  cpu=0%
+[mysqld] 23:59:12 UTC  pid=130  cpu=1%
+[mysqld] 23:59:13 UTC  pid=130  cpu=0%
+[mysqld] 23:59:14 UTC  pid=130  cpu=0%
+[mysqld] 23:59:15 UTC  pid=130  cpu=0%
+[mysqld] 23:59:16 UTC  pid=130  cpu=0%
+[mysqld] 23:59:17 UTC  pid=130  cpu=0%
+[mysqld] 23:59:19 UTC  pid=130  cpu=1%
+[mysqld] 23:59:20 UTC  pid=130  cpu=0%
+[mysqld] 23:59:21 UTC  pid=130  cpu=0%
+[mysqld] 23:59:22 UTC  pid=130  cpu=0%
+[mysqld] 23:59:23 UTC  pid=130  cpu=0%
+[mysqld] 23:59:24 UTC  pid=130  cpu=1%
+[mysqld] 23:59:26 UTC  pid=130  cpu=0%
+[mysqld] 23:59:27 UTC  pid=130  cpu=0%
+[mysqld] 23:59:28 UTC  pid=130  cpu=1%
+[mysqld] 23:59:29 UTC  pid=130  cpu=0%
+[mysqld] 23:59:30 UTC  pid=130  cpu=0%
+[mysqld] 23:59:31 UTC  pid=130  cpu=0%
+[mysqld] 23:59:32 UTC  pid=130  cpu=0%
+[mysqld] 23:59:34 UTC  pid=130  cpu=1%
+[mysqld] 23:59:35 UTC  pid=130  cpu=0%
+[mysqld] 23:59:36 UTC  pid=130  cpu=1%
+[mysqld] 23:59:37 UTC  pid=130  cpu=0%
+[mysqld] 23:59:38 UTC  pid=130  cpu=0%
+[mysqld] 23:59:39 UTC  pid=130  cpu=1%
+[mysqld] 23:59:40 UTC  pid=130  cpu=0%
+[mysqld] 23:59:42 UTC  pid=130  cpu=0%
+[mysqld] 23:59:43 UTC  pid=130  cpu=0%
+[mysqld] 23:59:44 UTC  pid=130  cpu=0%
+[mysqld] 23:59:45 UTC  pid=130  cpu=0%
+[mysqld] 23:59:46 UTC  pid=130  cpu=0%
+[mysqld] 23:59:47 UTC  pid=130  cpu=0%
+[mysqld] 23:59:48 UTC  pid=130  cpu=1%
+[mysqld] 23:59:50 UTC  pid=130  cpu=0%
+[mysqld] 23:59:51 UTC  pid=130  cpu=1%
+[mysqld] 23:59:52 UTC  pid=130  cpu=0%
+[mysqld] 23:59:53 UTC  pid=130  cpu=0%
+[mysqld] 23:59:54 UTC  pid=130  cpu=0%
+[mysqld] 23:59:55 UTC  pid=130  cpu=0%
+[mysqld] 23:59:56 UTC  pid=130  cpu=0%
+[mysqld] 23:59:58 UTC  pid=130  cpu=1%
+[mysqld] 23:59:59 UTC  pid=130  cpu=0%
+[mysqld] 23:59:59 UTC  pid=130  cpu=0%
+[mysqld] 00:00:00 UTC  pid=130  cpu=0%
+[mysqld] 00:00:01 UTC  pid=130  cpu=0%
+[mysqld] 00:00:02 UTC  pid=130  cpu=0%
+[mysqld] 00:00:03 UTC  pid=130  cpu=1%
+[mysqld] 00:00:04 UTC  pid=130  cpu=0%
+[mysqld] 00:00:06 UTC  pid=130  cpu=0%
+
+root@probe:~# dmesg | grep -i -E "leap|clock:"
+[   76.110454] Clock: inserting leap second 23:59:60 UTC
+
+root@probe:~# leapins show; date -u
+state: adjtimex()=4 TIME_WAIT (leap second has occurred), status=0x0010 STA_INS
+Sun Jul  1 00:00:06 UTC 2012
+
+root@probe:~# leapins offset; grep -A5 'clock 1:' /proc/timer_list | grep offset
+CLOCK_REALTIME - CLOCK_MONOTONIC = 1341100723122472821 nsecs
+  .offset:     1341100723122526536 nsecs
+  .offset:     1341100723122526536 nsecs
+
+---------- ПОСЛЕ вставленной секунды ----------
+
+root@probe:~# top -b -n 2 -d 1 -p 130 | awk '/^top -/{n++} n==2' | tail -n 2
+  130 root      20   0  697m  40m 5980 S    0  4.0   0:00.98 mysqld             
+
+
+root@probe:~# top -b -H -n 2 -d 1 -p 130 | awk '/^top -/{n++} n==2' | sed -n '7,16p'
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND            
+  130 root      20   0  697m  40m 5980 S    0  4.0   0:00.69 mysqld             
+  134 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  135 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  136 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  137 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  138 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  139 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  140 root      20   0  697m  40m 5980 S    0  4.0   0:00.02 mysqld             
+  141 root      20   0  697m  40m 5980 S    0  4.0   0:00.01 mysqld             
+
+root@probe:~# mpstat -P ALL 1 1 | head -n 6
+Linux 3.2.0-29-generic (probe) 	07/01/12 	_x86_64_	(2 CPU)
+
+00:00:09     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest   %idle
+00:00:10     all    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+00:00:10       0    0.99    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.01
+00:00:10       1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+[mysqld] 00:00:12 UTC  pid=130  cpu=0%
+[mysqld] 00:00:13 UTC  pid=130  cpu=0%
+[mysqld] 00:00:14 UTC  pid=130  cpu=0%
+[mysqld] 00:00:15 UTC  pid=130  cpu=0%
+[mysqld] 00:00:16 UTC  pid=130  cpu=1%
+
+root@probe:~# date -s "$(date)"
+Sun Jul  1 00:00:16 UTC 2012
+[mysqld] 00:00:17 UTC  pid=130  cpu=0%
+[mysqld] 00:00:18 UTC  pid=130  cpu=1%
+[mysqld] 00:00:19 UTC  pid=130  cpu=0%
+[mysqld] 00:00:20 UTC  pid=130  cpu=0%
+[mysqld] 00:00:21 UTC  pid=130  cpu=1%
+[mysqld] 00:00:22 UTC  pid=130  cpu=0%
+
+---------- ПОСЛЕ date -s ----------
+
+root@probe:~# top -b -n 2 -d 1 -p 130 | awk '/^top -/{n++} n==2' | tail -n 2
+  130 root      20   0  697m  40m 5980 S    0  4.0   0:01.02 mysqld             
+
+
+root@probe:~# top -b -H -n 2 -d 1 -p 130 | awk '/^top -/{n++} n==2' | sed -n '7,16p'
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND            
+  130 root      20   0  697m  40m 5980 S    0  4.0   0:00.69 mysqld             
+  134 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  135 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  136 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  137 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  138 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  139 root      20   0  697m  40m 5980 S    0  4.0   0:00.00 mysqld             
+  140 root      20   0  697m  40m 5980 S    0  4.0   0:00.02 mysqld             
+  141 root      20   0  697m  40m 5980 S    0  4.0   0:00.01 mysqld             
+
+root@probe:~# mpstat -P ALL 1 1 | head -n 6
+Linux 3.2.0-29-generic (probe) 	07/01/12 	_x86_64_	(2 CPU)
+
+00:00:26     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest   %idle
+00:00:27     all    0.49    0.00    0.49    0.00    0.00    0.00    0.00    0.00   99.01
+00:00:27       0    0.00    0.00    0.98    0.00    0.00    0.00    0.00    0.00   99.02
+00:00:27       1    0.00    0.00    0.99    0.00    0.00    0.00    0.00    0.00   99.01
+
+root@probe:~# leapins show; date -u
+state: adjtimex()=5 TIME_ERROR (clock unsynchronized), status=0x0050 STA_INS STA_UNSYNC
+Sun Jul  1 00:00:27 UTC 2012
+
+root@probe:~# leapins offset; grep -A5 'clock 1:' /proc/timer_list | grep offset
+CLOCK_REALTIME - CLOCK_MONOTONIC = 1341100722532268447 nsecs
+  .offset:     1341100722532322487 nsecs
+  .offset:     1341100722532322487 nsecs
+== demo done
+[  105.267649] SysRq : Resetting
+
+Script done on 2026-11-25 07:02:09+00:00 [COMMAND_EXIT_CODE="0"]

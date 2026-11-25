@@ -1,0 +1,41 @@
+# Пакеты Ubuntu 12.04 LTS (precise, amd64), из которых собирается гость. Строка: группа, sha256, адрес.
+# run.sh скачивает только группы выбранного прогона и сверяет sha256 каждого файла.
+# Ядра — с Launchpad; остальное — из архива old-releases.ubuntu.com (по http: целостность проверяет sha256).
+#
+# Ядра: 3.2.0-26.41 стояло у пользователей в ночь на 01.07.2012, 3.2.0-29.46 — первое с исправлением.
+k26      cdb38d35754b9d52df508fc7f95e7c529de6f92116d4ddc7a9d82a17401d3f5a  https://launchpad.net/ubuntu/+archive/primary/+files/linux-image-3.2.0-26-generic_3.2.0-26.41_amd64.deb
+k29      999d7b306e122768bd66df6860bb3ea3a0c232c7fb61a546c375556a60459cea  https://launchpad.net/ubuntu/+archive/primary/+files/linux-image-3.2.0-29-generic_3.2.0-29.46_amd64.deb
+# Пользовательская часть гостя: libc6 2.15, bash 4.2, coreutils 8.13 (GNU date), procps (top), sysstat (mpstat).
+base     2048e5ccb3a0f6e9ae5e3888995422b026217218dfd2efe7016d5a1a64b69ae6  http://old-releases.ubuntu.com/ubuntu/pool/main/c/coreutils/coreutils_8.13-3ubuntu3_amd64.deb
+base     71f7b01a6920c13b4bf2157157fa1890e3ca167d239e2a625a6219d45e7a419b  http://old-releases.ubuntu.com/ubuntu/pool/main/a/acl/libacl1_2.2.51-5ubuntu1_amd64.deb
+base     3685a8a345c962cfd7df42a2b47a34fa341353dc36497a9e2129c3f6069ad838  http://old-releases.ubuntu.com/ubuntu/pool/main/a/attr/libattr1_2.4.46-5ubuntu1_amd64.deb
+base     a9db2c0862cacdb75775fa8e2f5f9552397c3de0cd134e3f5311e25782a1d1bc  http://old-releases.ubuntu.com/ubuntu/pool/main/e/eglibc/libc6_2.15-0ubuntu10_amd64.deb
+base     689d92a01034549677a8d6746a98f99b3638655f6697883b09dc2be8bdc2912a  http://old-releases.ubuntu.com/ubuntu/pool/main/n/ncurses/libncurses5_5.9-4_amd64.deb
+base     6c6ee1a43988dac9581a05deacae1ecd24b69a6d6c34dafa52e2279996462f97  http://old-releases.ubuntu.com/ubuntu/pool/main/libs/libselinux/libselinux1_2.1.0-4.1ubuntu1_amd64.deb
+base     1e18b457adac1eeab038ce3c2aded1c0f711e217398a07b67a897270b758f943  http://old-releases.ubuntu.com/ubuntu/pool/main/l/lm-sensors/libsensors4_3.3.1-2ubuntu1_amd64.deb
+base     45fd988514db3166f2afaf5f796e6e937be4cf70de302644318c296c0a4dd336  http://old-releases.ubuntu.com/ubuntu/pool/main/n/ncurses/libtinfo5_5.9-4_amd64.deb
+base     dfe90e26c24a7da56a5b3ecd321ef90fec2814fbcf57841992d7e224f4149411  http://old-releases.ubuntu.com/ubuntu/pool/main/p/procps/procps_3.2.8-11ubuntu6_amd64.deb
+base     8ddfb1785367cb4279f6e1ea4707860353762ba28f4ed3fad6eb05497e7b3317  http://old-releases.ubuntu.com/ubuntu/pool/main/s/sysstat/sysstat_10.0.3-1_amd64.deb
+base     0c2051fa370b6a7730361a4a058fea3bd68f523427754f5eb7ddba9a183f5e63  http://old-releases.ubuntu.com/ubuntu/pool/main/b/bash/bash_4.2-2ubuntu2_amd64.deb
+# busybox-static 1.18.5: mount, dmesg, grep, awk и прочие мелочи, которых нет в пакетах выше.
+busybox  c61b4aac663f6ea60af746c379bc21d79ea22afca5fbe22699716e02e0ff49bd  http://old-releases.ubuntu.com/ubuntu/pool/main/b/busybox/busybox-static_1.18.5-1ubuntu4_amd64.deb
+# OpenJDK 6 (java version "1.6.0_24") и его библиотеки.
+java     aac526da2f2e44d76b11c6f6b6f8fbb646df0b73a2e1455da2ece45c7e3e401e  http://old-releases.ubuntu.com/ubuntu/pool/main/g/gcc-4.6/libgcc1_4.6.3-1ubuntu5_amd64.deb
+java     232ff1166d4d567998e9a77a5a77c859f28bf3c7a0d96baaf21907ad07a0342d  http://old-releases.ubuntu.com/ubuntu/pool/main/g/gcc-4.6/libstdc++6_4.6.3-1ubuntu5_amd64.deb
+java     e4c265ce14566f4b0329d44a7191ef64bdd80f903ce17869e71ad7cf6872dfb3  http://old-releases.ubuntu.com/ubuntu/pool/main/o/openjdk-6/openjdk-6-jre-headless_6b24-1.11.1-4ubuntu2_amd64.deb
+java     28c76bc7d6422f093816b0125fc52498b3b4c7779a84a08eb3f2d73e0d07ccc2  http://old-releases.ubuntu.com/ubuntu/pool/main/o/openjdk-6/openjdk-6-jre-lib_6b24-1.11.1-4ubuntu2_all.deb
+java     1d64ae1bf39b704eb4fc8586290975c4a558440c6e013cf38eefda1304340748  http://old-releases.ubuntu.com/ubuntu/pool/main/t/tzdata/tzdata-java_2012b-1_all.deb
+java     af0c73bd8d99f280a54570bc2008fccc57be5b6c9f3e1418c34497a8d5a2ffba  http://old-releases.ubuntu.com/ubuntu/pool/main/z/zlib/zlib1g_1.2.3.4.dfsg-3ubuntu4_amd64.deb
+# MySQL 5.5.22 и его библиотеки (libgcc1, libstdc++6, zlib1g — те же файлы, что у java).
+mysql    af25f3f5301ecdeaf28ba1cc7c0a1848a2c5580d6fea46bb67a3d2a1d4288794  http://old-releases.ubuntu.com/ubuntu/pool/main/m/mysql-5.5/mysql-server-core-5.5_5.5.22-0ubuntu1_amd64.deb
+mysql    40f78431e2251af95ebdbca3db019d81f2cfd108d1ca2e6f8ace89fda9e3be21  http://old-releases.ubuntu.com/ubuntu/pool/main/m/mysql-5.5/mysql-server-5.5_5.5.22-0ubuntu1_amd64.deb
+mysql    692facc05af65fa462b5d4faa1bcf56edb4047052888d3ceda7810b84248dd75  http://old-releases.ubuntu.com/ubuntu/pool/main/m/mysql-5.5/mysql-common_5.5.22-0ubuntu1_all.deb
+mysql    af28a1138aa4bba3eaf01bdc2cf07fe9b2731eb0b45491d0692ad042476c7385  http://old-releases.ubuntu.com/ubuntu/pool/main/t/tcp-wrappers/libwrap0_7.6.q-21_amd64.deb
+mysql    aac526da2f2e44d76b11c6f6b6f8fbb646df0b73a2e1455da2ece45c7e3e401e  http://old-releases.ubuntu.com/ubuntu/pool/main/g/gcc-4.6/libgcc1_4.6.3-1ubuntu5_amd64.deb
+mysql    232ff1166d4d567998e9a77a5a77c859f28bf3c7a0d96baaf21907ad07a0342d  http://old-releases.ubuntu.com/ubuntu/pool/main/g/gcc-4.6/libstdc++6_4.6.3-1ubuntu5_amd64.deb
+mysql    af0c73bd8d99f280a54570bc2008fccc57be5b6c9f3e1418c34497a8d5a2ffba  http://old-releases.ubuntu.com/ubuntu/pool/main/z/zlib/zlib1g_1.2.3.4.dfsg-3ubuntu4_amd64.deb
+# Не пакеты: тест ядра leap-a-day (John Stultz, GPLv2) и два заголовка, которые он подключает, — из основной ветки Linux,
+# тег v7.3 (коммит c03c1a14507dfaf8b856c2608f9ac216021fc222). Нужны только прогонам k26-selftest и k29-selftest.
+selftest 5f1bbbeb978fda91f7be48c0927d757f6cb43ed9e50b05b6dc4eddf1b5a61553  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/tools/testing/selftests/timers/leap-a-day.c?h=v7.3
+selftest 3ead34d5c83e0da4605176814b0d98b05f6c11f86ec3083fb44a8bf925d0c4a2  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/tools/testing/selftests/kselftest.h?h=v7.3
+selftest 3078feb92e0df8ca3539996664998b385a24d76c480fbd1b79c7a3b24ad2546a  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/tools/testing/selftests/clock-helpers.h?h=v7.3

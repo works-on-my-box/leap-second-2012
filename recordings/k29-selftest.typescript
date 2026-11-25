@@ -1,0 +1,70 @@
+Script started on 2026-11-25 09:12:00+00:00 [COMMAND="bash run-vm.sh vmlinuz-3.2.0-29-generic initrd.gz demo=selftest"]
+c[?7l[2J[0mSeaBIOS (version 1.16.3-debian-1.16.3-2)
+Booting from ROM...
+c[?7l[2J
+root@probe:~# cat /PACKAGES.txt
+bash_4.2-2ubuntu2_amd64.deb
+busybox-static_1.18.5-1ubuntu4_amd64.deb
+coreutils_8.13-3ubuntu3_amd64.deb
+libacl1_2.2.51-5ubuntu1_amd64.deb
+libattr1_2.4.46-5ubuntu1_amd64.deb
+libc6_2.15-0ubuntu10_amd64.deb
+libncurses5_5.9-4_amd64.deb
+libselinux1_2.1.0-4.1ubuntu1_amd64.deb
+libsensors4_3.3.1-2ubuntu1_amd64.deb
+libtinfo5_5.9-4_amd64.deb
+procps_3.2.8-11ubuntu6_amd64.deb
+sysstat_10.0.3-1_amd64.deb
+
+root@probe:~# uname -a
+Linux probe 3.2.0-29-generic #46-Ubuntu SMP Fri Jul 27 17:03:23 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux
+
+root@probe:~# cat /proc/version
+Linux version 3.2.0-29-generic (buildd@allspice) (gcc version 4.6.3 (Ubuntu/Linaro 4.6.3-1ubuntu5) ) #46-Ubuntu SMP Fri Jul 27 17:03:23 UTC 2012
+
+root@probe:~# cat /sys/devices/system/clocksource/clocksource0/current_clocksource; grep -m1 hres_active /proc/timer_list
+hpet
+  .hres_active    : 1
+
+root@probe:~# date -u -s "2012-06-30 23:59:35"
+Sat Jun 30 23:59:35 UTC 2012
+
+root@probe:~# leap-a-day -i 1; echo "код выхода: $?"
+Running for 1 iterations. Press ctrl-c to stop
+
+Setting time to Sat Jun 30 23:59:50 2012
+Scheduling leap second for Sun Jul  1 00:00:00 2012
+Setting timer for 1341100800 -  Sun Jul  1 00:00:00 2012
+Sat Jun 30 23:59:57 2012 +   2003 us (0)	TIME_INS
+Sat Jun 30 23:59:57 2012 + 503590 us (0)	TIME_INS
+Sat Jun 30 23:59:58 2012 +   7052 us (0)	TIME_INS
+Sat Jun 30 23:59:58 2012 + 508019 us (0)	TIME_INS
+Sat Jun 30 23:59:59 2012 +  10639 us (0)	TIME_INS
+Sat Jun 30 23:59:59 2012 + 511896 us (0)	TIME_INS
+Sat Jun 30 23:59:59 2012 +  12629 us (1)	TIME_OOP
+Sat Jun 30 23:59:59 2012 + 513640 us (1)	TIME_OOP
+Sun Jul  1 00:00:00 2012 +   2416 us (1)	TIME_WAIT
+Sun Jul  1 00:00:00 2012 + 502885 us (1)	TIME_WAIT
+Sun Jul  1 00:00:01 2012 +   5627 us (1)	TIME_WAIT
+Sun Jul  1 00:00:01 2012 + 507034 us (1)	TIME_WAIT
+Sun Jul  1 00:00:02 2012 +   9222 us (1)	TIME_WAIT
+Leap complete
+
+# Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
+код выхода: 0
+
+root@probe:~# dmesg | grep -i -E "leap|clock:"
+[   12.053615] Clock: inserting leap second 23:59:60 UTC
+
+root@probe:~# leapins show; date -u
+state: adjtimex()=0 TIME_OK, status=0x0000
+Sun Jul  1 00:00:03 UTC 2012
+
+root@probe:~# leapins offset; grep -A5 'clock 1:' /proc/timer_list | grep offset
+CLOCK_REALTIME - CLOCK_MONOTONIC = 1341100786947513138 nsecs
+  .offset:     1341100786947570346 nsecs
+  .offset:     1341100786947570346 nsecs
+== demo done
+[   16.443229] SysRq : Resetting
+
+Script done on 2026-11-25 09:12:17+00:00 [COMMAND_EXIT_CODE="0"]

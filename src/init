@@ -1,0 +1,28 @@
+#!/bin/bash
+# /init стенда: монтирует /proc, /sys, /dev, /tmp; при demo=auto (java, nofix, mysql, softirq, selftest) в строке ядра
+# прогоняет /demo.sh (/demo-java.sh, /demo-nofix.sh, /demo-mysql.sh, /demo-softirq.sh, /demo-selftest.sh) и перезагружает машину
+# (QEMU с -no-reboot на этом выходит), иначе даёт оболочку на консоли.
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin TERM=dumb HOME=/root
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t devtmpfs devtmpfs /dev 2>/dev/null
+mkdir -p /tmp /root
+mount -t tmpfs tmpfs /tmp
+hostname probe
+cd /root
+DEMO=
+case "$(cat /proc/cmdline)" in
+*demo=auto*) DEMO=/demo.sh ;;
+*demo=java*) DEMO=/demo-java.sh ;;
+*demo=nofix*) DEMO=/demo-nofix.sh ;;
+*demo=mysql*) DEMO=/demo-mysql.sh ;;
+*demo=softirq*) DEMO=/demo-softirq.sh ;;
+*demo=selftest*) DEMO=/demo-selftest.sh ;;
+esac
+if [ -n "$DEMO" ]; then
+	$DEMO
+	echo "== demo done"
+	sync
+	echo b > /proc/sysrq-trigger
+fi
+exec /bin/sh

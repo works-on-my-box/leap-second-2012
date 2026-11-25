@@ -1,0 +1,181 @@
+Script started on 2026-11-25 06:46:03+00:00 [COMMAND="bash run-vm.sh vmlinuz-3.2.0-26-generic initrd.gz demo=java"]
+c[?7l[2J[0mSeaBIOS (version 1.16.3-debian-1.16.3-2)
+Booting from ROM...
+c[?7l[2J
+root@probe:~# uname -a
+Linux probe 3.2.0-26-generic #41-Ubuntu SMP Thu Jun 14 17:49:24 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux
+
+root@probe:~# java -version
+java version "1.6.0_24"
+OpenJDK Runtime Environment (IcedTea6 1.11.1) (6b24-1.11.1-4ubuntu2)
+OpenJDK 64-Bit Server VM (build 20.0-b12, mixed mode)
+
+root@probe:~# date -u -s "2012-06-30 23:59:00"
+Sat Jun 30 23:59:00 UTC 2012
+
+root@probe:~# leapins
+before: adjtimex()=5 TIME_ERROR (clock unsynchronized), status=0x0040 STA_UNSYNC
+after : adjtimex()=1 TIME_INS (insert leap second at midnight UTC), status=0x0010 STA_INS
+
+root@probe:~# rmiregistry &
+
+root@probe:~# sleep 20; ps -o pid,nlwp,stat,args -p 87
+  PID NLWP STAT COMMAND
+   87   11 Sl   rmiregistry
+[java] 23:59:21 UTC  pid=87  cpu=1%
+[java] 23:59:22 UTC  pid=87  cpu=1%
+[java] 23:59:23 UTC  pid=87  cpu=0%
+[java] 23:59:24 UTC  pid=87  cpu=2%
+[java] 23:59:25 UTC  pid=87  cpu=0%
+[java] 23:59:27 UTC  pid=87  cpu=2%
+[java] 23:59:28 UTC  pid=87  cpu=1%
+[java] 23:59:29 UTC  pid=87  cpu=1%
+
+---------- ДО полуночи ----------
+
+root@probe:~# top -b -n 2 -d 1 -p 87 | awk '/^top -/{n++} n==2' | tail -n 2
+   87 0         20   0 1422m  16m 8476 S    0  1.6   0:03.66 rmiregistry        
+
+
+root@probe:~# top -b -H -n 2 -d 1 -p 87 | awk '/^top -/{n++} n==2' | sed -n '7,13p'
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND            
+   87 0         20   0 1422m  16m 8476 S    0  1.6   0:00.12 rmiregistry        
+   90 0         20   0 1422m  16m 8476 S    0  1.6   0:01.95 rmiregistry        
+   91 0         20   0 1422m  16m 8476 S    0  1.6   0:00.01 rmiregistry        
+   92 0         20   0 1422m  16m 8476 S    0  1.6   0:00.00 rmiregistry        
+   93 0         20   0 1422m  16m 8476 S    0  1.6   0:00.00 rmiregistry        
+   94 0         20   0 1422m  16m 8476 S    0  1.6   0:00.00 rmiregistry        
+
+root@probe:~# mpstat -P ALL 1 1 | head -n 6
+Linux 3.2.0-26-generic (probe) 	06/30/12 	_x86_64_	(2 CPU)
+
+23:59:32     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest   %idle
+23:59:33     all    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+23:59:33       0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+23:59:33       1    0.00    0.00    1.00    0.00    0.00    0.00    0.00    0.00   99.00
+
+root@probe:~# leapins show; date -u
+state: adjtimex()=1 TIME_INS (insert leap second at midnight UTC), status=0x0010 STA_INS
+Sat Jun 30 23:59:34 UTC 2012
+
+root@probe:~# leapins offset; grep -A5 'clock 1:' /proc/timer_list | grep offset
+CLOCK_REALTIME - CLOCK_MONOTONIC = 1341100735102700795 nsecs
+  .offset:     1341100735102758745 nsecs
+  .offset:     1341100735102758745 nsecs
+[java] 23:59:35 UTC  pid=87  cpu=1%
+[java] 23:59:36 UTC  pid=87  cpu=1%
+[java] 23:59:37 UTC  pid=87  cpu=2%
+[java] 23:59:38 UTC  pid=87  cpu=0%
+[java] 23:59:39 UTC  pid=87  cpu=1%
+[java] 23:59:41 UTC  pid=87  cpu=1%
+[java] 23:59:42 UTC  pid=87  cpu=1%
+[java] 23:59:43 UTC  pid=87  cpu=1%
+[java] 23:59:44 UTC  pid=87  cpu=0%
+[java] 23:59:45 UTC  pid=87  cpu=2%
+[java] 23:59:46 UTC  pid=87  cpu=1%
+[java] 23:59:47 UTC  pid=87  cpu=1%
+[java] 23:59:49 UTC  pid=87  cpu=1%
+[java] 23:59:50 UTC  pid=87  cpu=1%
+[java] 23:59:51 UTC  pid=87  cpu=0%
+[java] 23:59:52 UTC  pid=87  cpu=2%
+[java] 23:59:53 UTC  pid=87  cpu=1%
+[java] 23:59:54 UTC  pid=87  cpu=1%
+[java] 23:59:55 UTC  pid=87  cpu=0%
+[java] 23:59:56 UTC  pid=87  cpu=2%
+[java] 23:59:58 UTC  pid=87  cpu=1%
+[java] 23:59:59 UTC  pid=87  cpu=1%
+[java] 23:59:59 UTC  pid=87  cpu=18%
+[java] 00:00:00 UTC  pid=87  cpu=104%
+[java] 00:00:01 UTC  pid=87  cpu=99%
+[java] 00:00:03 UTC  pid=87  cpu=113%
+[java] 00:00:04 UTC  pid=87  cpu=136%
+[java] 00:00:05 UTC  pid=87  cpu=124%
+[java] 00:00:06 UTC  pid=87  cpu=141%
+[java] 00:00:08 UTC  pid=87  cpu=132%
+[java] 00:00:09 UTC  pid=87  cpu=118%
+[java] 00:00:10 UTC  pid=87  cpu=101%
+
+root@probe:~# dmesg | grep -i -E "leap|clock:"
+[   64.898196] Clock: inserting leap second 23:59:60 UTC
+
+root@probe:~# leapins show; date -u
+state: adjtimex()=4 TIME_WAIT (leap second has occurred), status=0x0010 STA_INS
+Sun Jul  1 00:00:11 UTC 2012
+
+root@probe:~# leapins offset; grep -A5 'clock 1:' /proc/timer_list | grep offset
+CLOCK_REALTIME - CLOCK_MONOTONIC = 1341100734102743100 nsecs
+  .offset:     1341100735102758745 nsecs
+  .offset:     1341100735102758745 nsecs
+
+---------- ПОСЛЕ вставленной секунды ----------
+
+root@probe:~# top -b -n 2 -d 1 -p 87 | awk '/^top -/{n++} n==2' | tail -n 2
+   87 0         20   0 1422m  16m 8476 S  101  1.6   0:17.87 rmiregistry        
+
+
+root@probe:~# top -b -H -n 2 -d 1 -p 87 | awk '/^top -/{n++} n==2' | sed -n '7,13p'
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND            
+   98 0         20   0 1422m  16m 8476 R   62  1.6   0:09.93 rmiregistry        
+   91 0         20   0 1422m  16m 8476 S   41  1.6   0:06.58 rmiregistry        
+   87 0         20   0 1422m  16m 8476 S    0  1.6   0:00.12 rmiregistry        
+   90 0         20   0 1422m  16m 8476 S    0  1.6   0:01.95 rmiregistry        
+   92 0         20   0 1422m  16m 8476 S    0  1.6   0:00.00 rmiregistry        
+   93 0         20   0 1422m  16m 8476 S    0  1.6   0:00.00 rmiregistry        
+
+root@probe:~# mpstat -P ALL 1 1 | head -n 6
+Linux 3.2.0-26-generic (probe) 	07/01/12 	_x86_64_	(2 CPU)
+
+00:00:16     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest   %idle
+00:00:17     all    9.17    0.00   15.60    0.00    0.00    0.92    0.00    0.00   74.31
+00:00:17       0    7.27    0.00   20.00    0.00    0.00    0.00    0.00    0.00   72.73
+00:00:17       1    9.26    0.00   11.11    0.00    1.85    1.85    0.00    0.00   75.93
+[java] 00:00:18 UTC  pid=87  cpu=89%
+[java] 00:00:19 UTC  pid=87  cpu=95%
+[java] 00:00:20 UTC  pid=87  cpu=98%
+[java] 00:00:21 UTC  pid=87  cpu=94%
+[java] 00:00:23 UTC  pid=87  cpu=103%
+
+root@probe:~# date -s "$(date)"
+Sun Jul  1 00:00:23 UTC 2012
+[java] 00:00:24 UTC  pid=87  cpu=1%
+[java] 00:00:25 UTC  pid=87  cpu=1%
+[java] 00:00:26 UTC  pid=87  cpu=1%
+[java] 00:00:27 UTC  pid=87  cpu=1%
+[java] 00:00:28 UTC  pid=87  cpu=1%
+[java] 00:00:29 UTC  pid=87  cpu=1%
+
+---------- ПОСЛЕ date -s ----------
+
+root@probe:~# top -b -n 2 -d 1 -p 87 | awk '/^top -/{n++} n==2' | tail -n 2
+   87 0         20   0 1422m  16m 8476 S    1  1.6   0:26.21 rmiregistry        
+
+
+root@probe:~# top -b -H -n 2 -d 1 -p 87 | awk '/^top -/{n++} n==2' | sed -n '7,13p'
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND            
+   98 0         20   0 1422m  16m 8476 S    1  1.6   0:14.01 rmiregistry        
+   87 0         20   0 1422m  16m 8476 S    0  1.6   0:00.12 rmiregistry        
+   90 0         20   0 1422m  16m 8476 S    0  1.6   0:01.95 rmiregistry        
+   91 0         20   0 1422m  16m 8476 S    0  1.6   0:08.78 rmiregistry        
+   92 0         20   0 1422m  16m 8476 S    0  1.6   0:00.00 rmiregistry        
+   93 0         20   0 1422m  16m 8476 S    0  1.6   0:00.00 rmiregistry        
+
+root@probe:~# mpstat -P ALL 1 1 | head -n 6
+Linux 3.2.0-26-generic (probe) 	07/01/12 	_x86_64_	(2 CPU)
+
+00:00:33     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest   %idle
+00:00:34     all    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+00:00:34       0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+00:00:34       1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+
+root@probe:~# leapins show; date -u
+state: adjtimex()=5 TIME_ERROR (clock unsynchronized), status=0x0050 STA_INS STA_UNSYNC
+Sun Jul  1 00:00:34 UTC 2012
+
+root@probe:~# leapins offset; grep -A5 'clock 1:' /proc/timer_list | grep offset
+CLOCK_REALTIME - CLOCK_MONOTONIC = 1341100733555277285 nsecs
+  .offset:     1341100733555304605 nsecs
+  .offset:     1341100733555304605 nsecs
+== demo done
+[  100.788187] SysRq : Resetting
+
+Script done on 2026-11-25 06:47:45+00:00 [COMMAND_EXIT_CODE="0"]
